@@ -1,49 +1,70 @@
-console.log("u r connects")
+console.log("js is working")
 
 let noteForm = document.querySelector("#note-form")
-console.log(noteForm)
+let notePad = document.querySelector(".notes")
 
-1//event listener created so form is submitted
-noteForm.addEventListener('submit', function(event){
+renderNotes()
+
+//1. we are adding event listener for form submission 
+noteForm.addEventListener('submit', function(event) {
     event.preventDefault()
     let noteTextInput = document.querySelector("#note-text")
-    let noteText = noteTextInput.value
+    console.log("listening pending")
+    let noteText = noteTextInput.value 
     noteTextInput.value = ""
     createNewNote(noteText)
-    console.log(event)
+    console.log("listener listening")
 })
-2//fetch request to post data "in its own function"
-function createNewNote (noteText) {
-    return fetch('http://localhost:3000/notes/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({note: noteText, done: false, created: moment().format()})
-})
-    .then(response => response.json())
-    .then(data => console.log(data))
-} 
 
-3//now we are rendering the notes app using data that is already on the server 
-function renderNotes() {
-    fetch('http://localhost:3000/notes/', {      method: 'GET'
-})
+// // //2. we want to get the fetch request to post data within its own function
+function createNewNote (noteText) {
+    fetch('http://localhost:3000/notes/', {
+        method:'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({note: noteText, done: false, created: moment().format()})
+    })
+    .then(() => renderNotes())
+    console.log("request fetched")
+}
+
+// //     //response data can be used to GET data in renderNotes(). The response data can be used to append new note to list of notes. Successful POST response from this server has the newly created data. The newly created data can be used to create notes individually
+// // }
+
+// // 3. now we are rendering the notePad using data that is in the server
+function renderNotes () {
+    notePad.innerHTML = ""
+    fetch('http://localhost:3000/notes', {
+        method:'GET'
+    })
     .then(response => response.json())
     .then(function (data) {
-        //here we want to add content to the DOM
+        console.log(data)
+        //add content to DOM
         //create div
-        //create p element
-        let note = document.createElement("div")
-        for (let thing of data) {
-            let noteItem = document.createElement ("p")
-            noteItem.dataset.id = thing.id 
-            noteItem.innerText = thing.item
-            note.appendChild(noteItem)
-            let deleteIcon = document.createElement('span')
-            deleteIcon.id = 'delete'
-            deleteIcon.classList.add('fa', 'fa-trash', 'mar-l-xs')
-            noteItem.appendChild(deleteIcon)
-            note.appendChild(noteItem)
-        }
-        noteForm.quearySelector(note)
+        //create p element for each item
+    for (let note of data) {
+        let noteParagraphEl = document.createElement("p")
+        noteParagraphEl.textContent = note.note
+        noteParagraphEl.id = note.id
+        notePad.appendChild(noteParagraphEl)
+        let createButtonEl = document.createElement("button") 
+        createButtonEl.textContent = "delete"
+        notePad.appendChild(createButtonEl) 
+        createButtonEl.addEventListener("click", () => {
+            deleteExistingNote(note.id) 
+        })
+        // noteObject.dataset.id = note.id
+        // noteObject.innerText = object.item
+    }
     })
 }
+
+function deleteExistingNote (noteId) {
+    fetch(`http://localhost:3000/notes/${noteId}`, {
+        method: 'DELETE'
+    })
+    .then(() => console.log("delete success"))
+    .then(renderNotes)   
+}
+
+ 
