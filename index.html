@@ -4,9 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://www.shoelace.style/source/css/shoelace.css">
+  <script src="moment.min.js"></script>
+  <script src="script.js" defer></script>
   <title>Notes</title>
 </head>
 <body>
-  
+  <main>
+    <h1>The Note Pad</h1>
+  <form id="note-form">
+    <label for="note-text">Create the new note</label>
+    <input type="text" id="note-text" placeholder="input the note text"></input>
+    <div class="default">
+      <button type="submit" class="button">create the new note</button>
+    </div>
+  </form>
+    <section class="notes">
+      <ul>
+        <li>Do the thing</li>
+      </ul>
+    </section>
+  </main>
 </body>
 </html>
